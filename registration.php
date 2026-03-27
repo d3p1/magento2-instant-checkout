@@ -5,6 +5,6 @@
  */
 \Magento\Framework\Component\ComponentRegistrar::register(
     \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    'Bina_InstantCheckout',
+    'D3p1_InstantCheckout',
     __DIR__
 );

@@ -3,7 +3,7 @@
  * @description Instant checkout model
  * @author      C. M. de Picciotto <d3p1@d3p1.dev> (https://d3p1.dev/)
  */
-namespace Bina\InstantCheckout\Model;
+namespace D3p1\InstantCheckout\Model;
 
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -44,7 +44,7 @@ use Magento\Quote\Model\Quote\TotalsCollector;
 use Magento\Payment\Model\Method\Free;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
-use Bina\InstantCheckout\Api\CheckoutInterface;
+use D3p1\InstantCheckout\Api\CheckoutInterface;
 
 class Checkout extends Onepage implements CheckoutInterface
 {

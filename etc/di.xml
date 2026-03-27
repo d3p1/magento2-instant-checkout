@@ -6,5 +6,5 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <preference for="Bina\InstantCheckout\Api\CheckoutInterface" type="Bina\InstantCheckout\Model\Checkout"/>
+    <preference for="D3p1\InstantCheckout\Api\CheckoutInterface" type="D3p1\InstantCheckout\Model\Checkout"/>
 </config>

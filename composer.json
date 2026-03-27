@@ -1,5 +1,5 @@
 {
-    "name": "bina/module-instant-checkout",
+    "name": "d3p1/module-instant-checkout",
     "description": "Instant checkout",
     "type": "magento2-module",
     "version": "2.3.2",
@@ -7,12 +7,12 @@
         "OSL-3.0",
         "AFL-3.0"
     ],
-    "homepage": "https://www.binacommerce.com",
+    "homepage": "https://www.d3p1.dev",
     "authors": [
         {
             "name": "C. M. de Picciotto",
-            "email": "cmdepicciotto@binacommerce.com",
-            "homepage": "https://www.binacommerce.com",
+            "email": "d3p1@d3p1.dev",
+            "homepage": "https://www.d3p1.dev",
             "role": "Leader"
         }
     ],
@@ -26,7 +26,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Bina\\InstantCheckout\\": ""
+            "D3p1\\InstantCheckout\\": ""
         }
     }
 }

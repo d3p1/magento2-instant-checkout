@@ -12,7 +12,7 @@
  *              instant checkout circuit is finished
  * @see         \Magento\Checkout\Controller\Onepage\Success::execute()
  */
-namespace Bina\InstantCheckout\Api;
+namespace D3p1\InstantCheckout\Api;
 
 use Exception;
 use Magento\Customer\Api\Data\CustomerInterface;
