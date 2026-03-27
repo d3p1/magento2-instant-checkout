@@ -1,6 +1,6 @@
 <div align=center>
 
-# [MAGENTO 2 - GEO IP]
+# [MAGENTO 2 - INSTANT CHECKOUT]
 
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![code consistency: php_code_sniffer](https://img.shields.io/badge/code_consistency-php_code_sniffer-blue.svg)](https://github.com/PHPCSStandards/PHP_CodeSniffer)
