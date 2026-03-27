@@ -1,16 +1,7 @@
 <?php
 /**
- *
  * @description Instant checkout model
- *
- * @author Bina Commerce      <https://www.binacommerce.com>
- * @author C. M. de Picciotto <cmdepicciotto@binacommerce.com>
- *
- * @note This model was created with the intention of providing the possibility of carrying out the checkout circuit immediately (without the need for the client to enter or accept steps manually)
- * @note It is an util that must be managed for the correct life cycle of the entire instant checkout circuit: it is necessary to clean the checkout session once the instant checkout circuit is finished
- *
- * @see \Magento\Checkout\Controller\Onepage\Success::execute()
- *
+ * @author      C. M. de Picciotto <d3p1@d3p1.dev> (https://d3p1.dev/)
  */
 namespace Bina\InstantCheckout\Model;
 
@@ -58,21 +49,16 @@ use Bina\InstantCheckout\Api\CheckoutInterface;
 class Checkout extends Onepage implements CheckoutInterface
 {
     /**
-     *
      * @var CartInterfaceFactory
-     *
      */
     protected $_quoteFactory;
 
     /**
-     *
      * @var PaymentHelper
-     *
      */
     protected $_paymentHelper;
 
     /**
-     *
      * Constructor
      *
      * @param CartInterfaceFactory          $quoteFactory
@@ -104,7 +90,6 @@ class Checkout extends Onepage implements CheckoutInterface
      * @param CartManagementInterface       $quoteManagement
      * @param DataObjectHelper              $dataObjectHelper
      * @param TotalsCollector               $totalsCollector
-     *
      */
     public function __construct(
         CartInterfaceFactory          $quoteFactory,
@@ -137,25 +122,9 @@ class Checkout extends Onepage implements CheckoutInterface
         DataObjectHelper              $dataObjectHelper,
         TotalsCollector               $totalsCollector
     ) {
-        /**
-         *
-         * @note Init quote factory
-         *
-         */
-        $this->_quoteFactory = $quoteFactory;
-
-        /**
-         *
-         * @note Init payment helper
-         *
-         */
+        $this->_quoteFactory  = $quoteFactory;
         $this->_paymentHelper = $paymentHelper;
 
-        /**
-         *
-         * @note Parent constructor
-         *
-         */
         parent::__construct(
             $eventManager,
             $checkoutHelper,
@@ -188,62 +157,22 @@ class Checkout extends Onepage implements CheckoutInterface
     }
 
     /**
-     *
-     * Get quote object
-     *
-     * @return Quote
-     *
-     * @note This method is a rewrite of the parent method to avoid using the checkout session because it is not necessary for the instant checkout process
-     *
+     * {@inheritDoc}
      */
     public function getQuote()
     {
-        /**
-         *
-         * @note Validate if quote is set
-         *
-         */
         if ($this->_quote === null) {
-            /**
-             *
-             * @note Create quote
-             *
-             */
             /** @var Quote $quote */
             $quote = $this->_quoteFactory->create();
             $quote->setStoreId($this->_storeManager->getStore()->getId());
-
-            /**
-             *
-             * @note Set quote
-             *
-             */
             $this->_quote = $quote;
         }
 
-        /**
-         *
-         * @note Return quote
-         *
-         */
         return $this->_quote;
     }
 
     /**
-     *
-     * Execute checkout
-     *
-     * @param string                 $paymentMethod
-     * @param Product                $product
-     * @param CustomerInterface|null $customer
-     * @param array|null             $productRequestInfo
-     * @param bool|null              $shouldIgnoreBillingValidation
-     * @param bool|null              $isPlaceable
-     *
-     * @return $this
-     *
-     * @throws Exception
-     *
+     * {@inheritDoc}
      */
     public function execute(
         $paymentMethod,
@@ -253,199 +182,99 @@ class Checkout extends Onepage implements CheckoutInterface
         $shouldIgnoreBillingValidation = null,
         $isPlaceable                   = null
     ) {
-        /**
-         *
-         * @note Try
-         *
-         */
         try {
-            /**
-             *
-             * @note Assign customer to quote
-             *
-             */
             $this->_assignCustomer($customer);
 
-            /**
-             *
-             * @note Init billing address
-             *
-             */
             $this->_initBillingAddress($shouldIgnoreBillingValidation);
 
-            /**
-             *
-             * @note Validate if product is a virtual product
-             *
-             */
             if (!$product->isVirtual()) {
-                /**
-                 *
-                 * @note If it is not a virtual product, init shipping address
-                 *
-                 */
                 $this->_initShippingAddress();
             }
 
-            /**
-             *
-             * @note Add product
-             *
-             */
             $this->_addProduct($product, $productRequestInfo);
 
-            /**
-             *
-             * @note Init payment method
-             *
-             */
             $this->_initPaymentMethod($paymentMethod);
 
             /**
-             *
              * @note Check if order is placeable
              * @note If it is a free quote then place order
-             *
              */
             if ($isPlaceable || $this->_isFreeQuote()) {
-                /**
-                 *
-                 * @note Save order
-                 *
-                 */
                 $this->saveOrder();
             }
             else {
-                /**
-                 *
-                 * @note Close quote
-                 *
-                 */
                 $this->_closeQuote();
             }
         }
-
-        /**
-         *
-         * @note Catch
-         *
-         */
         catch (Exception $e) {
-            /**
-             *
-             * @note Validate if quote was created
-             *
-             */
             if ($this->getQuote()->getId()) {
-                /**
-                 *
-                 * @note Disable quote
-                 *
-                 */
                 $this->getQuote()->setIsActive(false);
                 $this->quoteRepository->save($this->getQuote());
             }
 
-            /**
-             *
-             * @note Throw exception
-             *
-             */
             throw new Exception($e->getMessage());
         }
 
-        /**
-         *
-         * @note Return
-         *
-         */
         return $this;
     }
 
     /**
-     *
      * Assign customer to quote
      *
-     * @param CustomerInterface|null $customer
-     *
+     * @param  CustomerInterface|null $customer
      * @return void
-     *
      * @throws LocalizedException
-     *
      */
     protected function _assignCustomer($customer = null)
     {
         /**
-         *
-         * @note Check custom customer
-         *
+         * @note If customer is not set,
+         *       check if there is a logged in customer
          */
         if (is_null($customer)) {
-            /**
-             *
-             * @note If customer is not set, check if there is a logged in customer
-             *
-             */
             $customerSession = $this->getCustomerSession();
             $customer        = $customerSession->getCustomerDataObject();
         }
 
-        /**
-         *
-         * @note Check customer
-         *
-         */
         if (!$customer->getId()) {
             throw new LocalizedException(__('To create an instant order, the customer must be logged in.'));
         }
 
-        /**
-         *
-         * @note Assign customer
-         *
-         */
         $this->getQuote()->assignCustomer($customer);
     }
 
     /**
-     *
      * Initialize quote billing address
      *
-     * @param bool|null $shouldIgnoreBillingValidation
-     *
+     * @param  bool|null $shouldIgnoreBillingValidation
      * @return void
-     *
      */
-    protected function _initBillingAddress($shouldIgnoreBillingValidation = null)
-    {
+    protected function _initBillingAddress(
+        $shouldIgnoreBillingValidation = null
+    ) {
         /**
-         *
-         * @note Check if it is necessary to validate billing address information
-         *
+         * @note Check if it is necessary to
+         *       validate billing address information
          */
         if (!$shouldIgnoreBillingValidation) {
-            /**
-             *
-             * @note Import customer default billing address
-             *
-             */
             $this->getQuote()->getBillingAddress()->importCustomerAddressData(
-                $this->getCustomerSession()->getCustomer()->getDefaultBillingAddress()->getDataModel()
+                $this->getCustomerSession()->getCustomer()
+                                           ->getDefaultBillingAddress()
+                                           ->getDataModel()
             );
         }
         else {
-            /**
-             *
-             * @note Skip billing address validation
-             *
-             */
-            $this->getQuote()->getBillingAddress()->setData('should_ignore_validation', true);
+            $this->getQuote()->getBillingAddress()->setData(
+                'should_ignore_validation',
+                true
+            );
 
             /**
-             *
              * @note Add customer generic data to billing address
-             * @note For some reason, if this generic customer data is not set to the quote billing address, the order billing information breaks when someone tries to watch it on frontend/backend
-             *
+             * @note For some reason, if this generic customer data is not set
+             *       to the quote billing address,
+             *       the order billing information breaks when someone
+             *       tries to watch it on frontend/backend
              */
             $customerSession = $this->getCustomerSession();
             $customer        = $customerSession->getCustomerDataObject();
@@ -459,184 +288,124 @@ class Checkout extends Onepage implements CheckoutInterface
     }
 
     /**
-     *
      * Initialize quote shipping address
      *
      * @return void
-     *
      */
     protected function _initShippingAddress()
     {
         /**
-         *
          * @note Import customer default shipping address
-         *
          */
         $this->getQuote()->getShippingAddress()->importCustomerAddressData(
-            $this->getCustomerSession()->getCustomer()->getDefaultShippingAddress()->getDataModel()
+            $this->getCustomerSession()->getCustomer()
+                                       ->getDefaultShippingAddress()
+                                       ->getDataModel()
         );
     }
 
     /**
-     *
      * Add product
      *
-     * @param Product    $product
-     * @param array|null $requestInfo
-     *
+     * @param  Product    $product
+     * @param  array|null $requestInfo
      * @return void
-     *
      * @throws LocalizedException
-     *
      */
     protected function _addProduct($product, $requestInfo = null)
     {
-        /**
-         *
-         * @note Check request info
-         *
-         */
         if (is_null($requestInfo)) {
             /**
-             *
-             * @note Convert to array (needed to create the data object used to add the product to the quote)
-             *
+             * @note Convert to array (needed to create
+             *       the data object used to add the product to the quote)
              */
             $requestInfo = [];
         }
 
         /**
-         *
          * @note Add product to quote
-         * @note It is necessary to parse product request info as data object. Magento uses the deprecated cart model to manage the request info and add the product to the quote. This cart deprecated model filters data from the request, but it seems that it is not necessary to add the product correctly
-         *
-         * @see Cart::addProduct()
-         * @see Cart::_getProductRequest()
-         *
+         * @note It is necessary to parse product request info as data object.
+         *       Magento uses the deprecated cart model to manage
+         *       the request info and add the product to the quote.
+         *       This cart deprecated model filters data from the request,
+         *       but it seems that it is not necessary to
+         *       add the product correctly
+         * @see  Cart::addProduct()
+         * @see  Cart::_getProductRequest()
          */
         $result = $this->getQuote()->addProduct($product, new DataObject($requestInfo));
 
         /**
-         *
          * @note Check result
          * @note If result is string then there was an error adding the product
-         * @note For some reason, Magento decided to return a string (error message) instead of throwing an exception when an error happened
-         *
-         * @see Quote::addProduct()
-         * @see Cart::addProduct()
-         *
+         * @note For some reason, Magento decided to return a string
+         *       (error message) instead of throwing an exception
+         *       when an error happened
+         * @see  Quote::addProduct()
+         * @see  Cart::addProduct()
          */
         if (is_string($result)) {
-            /**
-             *
-             * @note Send error message
-             *
-             */
             throw new LocalizedException(__($result));
         }
 
         /**
-         *
          * @note Refresh quote
-         *
          */
         $this->getQuote()->collectTotals();
         $this->quoteRepository->save($this->getQuote());
     }
 
     /**
-     *
      * Init payment method information
      *
-     * @param string $paymentMethod
-     *
+     * @param  string $paymentMethod
      * @return void
-     *
      */
     protected function _initPaymentMethod($paymentMethod)
     {
         /**
-         *
          * @note Check if quote is free
-         *
          */
         if ($this->_isFreeQuote()) {
             /**
-             *
              * @note If it is a free quote then use free payment method
-             *
              */
             $paymentMethod = Free::PAYMENT_METHOD_FREE_CODE;
         }
 
         /**
-         *
          * @note Add payment method
-         *
          */
         $data[PaymentInterface::KEY_METHOD] = $paymentMethod;
 
         /**
-         *
          * @note Save payment information
-         *
          */
         $this->savePayment($data);
     }
 
     /**
-     *
      * Close quote
      *
      * @return void
-     *
      */
     protected function _closeQuote()
     {
-        /**
-         *
-         * @note Set quote as inactive
-         *
-         */
         $this->getQuote()->setIsActive(false);
-
-        /**
-         *
-         * @note Reserve order ID
-         *
-         */
         $this->getQuote()->reserveOrderId();
-
-        /**
-         *
-         * @note Save quote
-         *
-         */
         $this->quoteRepository->save($this->getQuote());
     }
 
     /**
-     *
      * Validate if quote is free
      *
      * @return bool
-     *
      */
     protected function _isFreeQuote()
     {
-        /**
-         *
-         * @note Get free payment method
-         *
-         */
-        $method = $this->_paymentHelper->getMethodInstance(Free::PAYMENT_METHOD_FREE_CODE);
-
-        /**
-         *
-         * @note Check if free method is available
-         * @note If it is available then it is a free quote
-         *
-         */
+        $method = $this->_paymentHelper->getMethodInstance(
+            Free::PAYMENT_METHOD_FREE_CODE
+        );
         return $method->isAvailable($this->getQuote());
     }
 }
