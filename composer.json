@@ -1,29 +1,29 @@
 {
-  "name": "d3p1/module-instant-checkout",
-  "description": "Instant checkout",
-  "type": "magento2-module",
-  "license": [
-    "MIT"
-  ],
-  "homepage": "https://www.d3p1.dev",
-  "authors": [
-    {
-      "name": "C. M. de Picciotto",
-      "email": "d3p1@d3p1.dev",
-      "homepage": "https://www.d3p1.dev"
-    }
-  ],
-  "require": {
-    "php": "^7.0.0||^8.0.0",
-    "magento/framework": "~101.0||~102.0||~103.0",
-    "magento/module-checkout": "~100.0"
-  },
-  "autoload": {
-    "files": [
-      "src/registration.php"
+    "name": "d3p1/module-instant-checkout",
+    "description": "Instant checkout",
+    "type": "magento2-module",
+    "license": [
+        "MIT"
     ],
-    "psr-4": {
-      "D3p1\\InstantCheckout\\": "src"
+    "homepage": "https://www.d3p1.dev",
+    "authors": [
+        {
+            "name": "C. M. de Picciotto",
+            "email": "d3p1@d3p1.dev",
+            "homepage": "https://www.d3p1.dev"
+        }
+    ],
+    "require": {
+        "php": "^7.0.0||^8.0.0",
+        "magento/framework": "~101.0||~102.0||~103.0",
+        "magento/module-checkout": "~100.0"
+    },
+    "autoload": {
+        "files": [
+            "src/registration.php"
+        ],
+        "psr-4": {
+            "D3p1\\InstantCheckout\\": "src"
+        }
     }
-  }
 }
