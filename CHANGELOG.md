@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/d3p1/magento2-instant-checkout/compare/v1.0.2...v1.0.3) (2026-05-06)
+
+
+### Bug Fixes
+
+* improve code style [[#1](https://github.com/d3p1/magento2-instant-checkout/issues/1)] ([80ce428](https://github.com/d3p1/magento2-instant-checkout/commit/80ce428de2e880541c8303a8be7028050e63a5c6))
+
 ## [1.0.2](https://github.com/d3p1/magento2-instant-checkout/compare/v1.0.1...v1.0.2) (2026-05-06)
 
 

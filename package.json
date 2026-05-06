@@ -1,6 +1,6 @@
 {
     "name": "@d3p1/module-instant-checkout",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Instant checkout",
     "private": true,
     "scripts": {
